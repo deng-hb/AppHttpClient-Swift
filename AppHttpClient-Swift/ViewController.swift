@@ -75,7 +75,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         switch indexPath.row {
         case 0:
             
-                AppHttpClient().get(url: host.appending("/"),completionHandler:{(_ data :Data? ,_ response :URLResponse?,_ error: Error?)->Void in
+                AppHttpClient().get(url: host.appending("/"),completionHandler:{(data,response,error)->Void in
                     print(response)
                     
                     let body = String(data: data!, encoding: String.Encoding.utf8)
@@ -84,16 +84,45 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
             break
         
         case 1:
-            AppHttpClient().post(url: host.appending("/post"), parameters: ["amount":"120","name":"张三"], completionHandler: { (data, response, error)->Void in
+            AppHttpClient().post(url: host.appending("/post"), parameters: ["amount":"120" as AnyObject,"name":"张三" as AnyObject], completionHandler: { (data, response, error)->Void in
                 
                 let body = String(data: data!, encoding: String.Encoding.utf8)
                 print(body)
             })
             break
+        case 2:
             
+            let image = self.screenSnapshot(save: false)
+            let imageData = UIImagePNGRepresentation(image!)
+            
+            AppHttpClient().post(url: host.appending("/upload"), parameters: ["amount":"120" as AnyObject,"images": ["file_name":"tup","file_data":imageData as AnyObject] as AnyObject ], completionHandler: { (data, response, error)->Void in
+                
+                let body = String(data: data!, encoding: String.Encoding.utf8)
+                print(body)
+            })
+            break
         default: break
 
         }
+    }
+    
+    // 截图
+    func screenSnapshot(save: Bool) -> UIImage? {
+        
+        guard let window = UIApplication.shared.keyWindow else { return nil }
+        
+        // 用下面这行而不是UIGraphicsBeginImageContext()，因为前者支持Retina
+        UIGraphicsBeginImageContextWithOptions(window.bounds.size, false, 0.0)
+        
+        window.layer.render(in: UIGraphicsGetCurrentContext()!)
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        
+        if save { UIImageWriteToSavedPhotosAlbum(image!, self, nil, nil) }
+        
+        return image
     }
 }
 
