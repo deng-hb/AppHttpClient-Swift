@@ -3,7 +3,7 @@
 
 ### 发起一个GET请求
 ```
-AppHttpClient().get(url: "https://denghb.com/",completionHandler:{(_ data :Data? ,_ response :URLResponse?,_ error: Error?)->Void in
+AppHttpClient().get(url: "https://denghb.com/",completionHandler:{(data,response,error)->Void in
     print(response)
 
     let body = String(data: data!, encoding: String.Encoding.utf8)
