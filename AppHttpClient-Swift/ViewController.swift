@@ -33,7 +33,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
             return strs
         }()
 
-//        datas = ["x","y","z"]
+        datas = ["GET","POST","Upload"]
         
         let mainTableView = UITableView(frame: self.view.frame)//CGRect(x:0,y:0,width:mScreenWidth,height:mScreenHeight))
        
@@ -43,12 +43,6 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         
         self.view.addSubview(mainTableView);
         
-        AppHttpClient().get(url: "https://denghb.com/",completionHandler:{(_ data :Data? ,_ response :URLResponse?,_ error: Error?)->Void in
-            print(response)
-            
-            let body = String(data: data!, encoding: String.Encoding.utf8)
-            print(body)
-        });
     }
 
     override func didReceiveMemoryWarning() {
@@ -76,6 +70,30 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        let host = "http://192.168.58.45:8090"
+        
+        switch indexPath.row {
+        case 0:
+            
+                AppHttpClient().get(url: host.appending("/"),completionHandler:{(_ data :Data? ,_ response :URLResponse?,_ error: Error?)->Void in
+                    print(response)
+                    
+                    let body = String(data: data!, encoding: String.Encoding.utf8)
+                    print(body)
+                })
+            break
+        
+        case 1:
+            AppHttpClient().post(url: host.appending("/post"), parameters: ["amount":"120","name":"张三"], completionHandler: { (data, response, error)->Void in
+                
+                let body = String(data: data!, encoding: String.Encoding.utf8)
+                print(body)
+            })
+            break
+            
+        default: break
+
+        }
     }
 }
 
